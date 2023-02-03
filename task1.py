@@ -1,59 +1,53 @@
-
-
-#Agregar esta parte para que funcione en windows
+#Add this part to make it work on windows
 import os
-
 os.environ['XUVTOP']='C:\\Users\\sarit\\CHIANTI'
 os.environ["HOME"]="C:\\Users\\sarit\\CHIANTI"
 
-
-
+#Packages
 import ChiantiPy.core as ch
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-plt.close('all')
+#Defining temperature and electron density
 temp=np.logspace(4.69897,7.69897,46) #kelvin
-#temp=temp[33]
-#edens=np.ones(46)*3.e+9
 edens=3.e+9 #cm-3
 
+#Gain function
 Fe_xviii = ch.ion('fe_18',temperature=temp,eDensity=edens,abundance='sun_coronal_1992_feldman_ext')  
 
-#Fe_xviii.popPlot()
-#Fe_xviii.intensityPlot(wvlRange=[210.,220])
-#plt.show()
+#Level transitions within the Fe XVIII ion that lead to line emission
+Fe_xviii.intensity() 
 
-Fe_xviii.intensity() #level transitions within the Fe XVIII ion that lead to line emission
+'''
+#Intensity is a dictionary with the following keys
+for ii in Fe_xviii.Intensity.keys(): print(ii)
+#To see the size and shape of the values: 
+for ii in Fe_xviii.Intensity.values(): print(ii.shape)
+'''
 
-
-wavelengths=Fe_xviii.Intensity['wvl'] #las longitudes de onda no estan ordenadas 
-#da como salida una matriz con las temperaturas que hemos definido y las longitudes de onda donde se han encontrado los niveles de transición
-#para las el ion
-intensities=Fe_xviii.Intensity['intensity'] ##gain functions, [Temperature,wavelengths] sets de ganancia para diferentes temperaturas y longitudes de onda
+wavelengths=Fe_xviii.Intensity['wvl'] #the wavelengths are not ordered
+#Gain functions
+intensities=Fe_xviii.Intensity['intensity']#[Temperature,wavelengths], gain for different temperatures and wavelengths
+#Sorting the wavelength in ascending order and the gain
 index_ord=np.argsort(wavelengths)
-wvl_ord=wavelengths[index_ord] # ordenamos de forma ascendente
-intensities_ord=intensities[:,index_ord] #ordenamos la ganacia en longitudes de onda
+wvl_ord=wavelengths[index_ord] 
+intensities_ord=intensities[:,index_ord]
 
-
-ind_ord = np.unravel_index(np.argmax(intensities_ord, axis=None), intensities_ord.shape) #posicion del valor maximo
+#Finding maximums
+ind_ord = np.unravel_index(np.argmax(intensities_ord, axis=None), intensities_ord.shape) 
 index_Tmax=ind_ord[0]
 index_wvlmax=ind_ord[1]
 
 
-#Task 1a
+#---Task 1a---
+#Plot the intensities as a function of wavelength
 plt.figure(1)
-#plt.stem(wvl_ord , intensities_ord[index_Tmax,:],linefmt='k',markerfmt='D',markersize=0.1)
 markerline, stemlines, baseline = plt.stem(wvl_ord, intensities_ord[index_Tmax,:], linefmt='k', markerfmt='D')
-#markerline.set_color('k')
-#markerline.set_markersize(2)
 markerline.set_visible(False)
 baseline.set_visible(False)
-#plt.plot(wvl_ord , intensities_ord[index_Tmax,:])
 plt.xlim(90,96)
 plt.ylim(0,1.40e-25)
-#plt.yscale("log") 
 plt.xlabel(r'Wavelength ($\AA$)')
 plt.ylabel(r'Gain (erg $cm^{-2} s^{-1} sr^{-1}$)')
 plt.title(r'Fe XVII T=7.9e06(K) Density=3.0e+09($cm^{-3}$)')
@@ -69,24 +63,12 @@ plt.text(105.987-0.3,0.03e-25, 'Fe XVIII 105.987', c = 'k', fontsize=9,rotation=
 plt.text(107.235-0.3,0.03e-25, 'Fe XVIII 107.235', c = 'k', fontsize=9,rotation=90)
 plt.text(109.606-0.3,0.03e-25, 'Fe XVIII 109.606', c = 'k', fontsize=9,rotation=90)
 plt.show()
-
-
 #plt.savefig('task1a.eps',format='eps')
 
-#plt.figure(2)
-
-#Fe_xviii.intensityPlot(wvlRange=[85.,112.]) #esto solo printea las 10 más intensas y una T random
-
-'''
-#Intensity is a dictionary with the following keys
-for ii in Fe_xviii.Intensity.keys(): print(ii)
-
-#To see the size and shape of the values: 
-for ii in Fe_xviii.Intensity.values(): print(ii.shape)
-'''
 
 
-#Task 1b, Task 1c
+
+#---Task 1b---
 
 gain_total=intensities_ord.sum(axis=1)
 
@@ -98,7 +80,7 @@ plt.xlabel(r'Temperature (K)')
 plt.ylabel(r'Gain$_{total}$ (erg $cm^{-2} s^{-1} sr^{-1}$)')
 
 
-#Task 1c
+#---Task 1c---
 plt.figure(4)
 
 edens=np.array([3e+7,3e+8,3e+9,3e+10])
