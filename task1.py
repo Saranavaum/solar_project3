@@ -69,6 +69,7 @@ plt.show()
 
 
 #---Task 1b---
+#calculating the aggregated gain function
 
 gain_total=intensities_ord.sum(axis=1)
 
@@ -81,16 +82,17 @@ plt.ylabel(r'Gain$_{total}$ (erg $cm^{-2} s^{-1} sr^{-1}$)')
 
 
 #---Task 1c---
-plt.figure(4)
+#do the curves you have plotted in Task 1b sensitively depend on the number density value chosen above?
 
+plt.figure(4)
 edens=np.array([3e+7,3e+8,3e+9,3e+10])
 for i in edens:
     Fe_xviii = ch.ion('fe_18',temperature=temp,eDensity=i,abundance='sun_coronal_1992_feldman_ext')  
     Fe_xviii.intensity()
     wavelengths=Fe_xviii.Intensity['wvl'] 
-    intensities=Fe_xviii.Intensity['intensity'] ##gain functions, [Temperature,wavelengths] sets de ganancia para diferentes temperaturas y longitudes de onda
+    intensities=Fe_xviii.Intensity['intensity'] 
     index_ord=np.argsort(wavelengths)
-    wvl_ord=wavelengths[index_ord] # ordenamos de forma ascendente
+    wvl_ord=wavelengths[index_ord] 
     intensities_ord=intensities[:,index_ord] 
     gain_total=intensities_ord.sum(axis=1)
     plt.loglog(temp,gain_total,label=r"$n_e$={:.2e}".format(i))
