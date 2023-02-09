@@ -152,7 +152,7 @@ if (booltask3):
   z_sec=z[z>2]
 
   #Defining the resolution of the results
-  resolution=4 #cambiar esto para variar la resolución
+  resolution=4 
   a=np.linspace(0, 503, resolution )
   a=a.astype(int)
 
@@ -174,20 +174,20 @@ if (booltask3):
           i_211=find_closest(wvl_ord,211)
           r_wvl=np.arange(i_211-5,i_211+6)
           r_int=intensities_ord[:,r_wvl]
-
+            
+          #Some conditions
           g_211=np.sum(r_int,axis=1)
           g_211[T_sec3[:,i,j]<1.e5]=0
           g_211[n_sec3[:,i,j]>1.e11]=0
 
-          #integral trapezoidal rule non-uniform spacing grid python
+          #Integral with the trapezoidal rule for a non-uniform spacing grid
           n_H=n_sec3[:,i,j]/1.2
           integrando=g_211*n_H*n_sec3[:,i,j]
           integral_i=np.trapz(integrando, x=z_sec)
           integral_map.append(integral_i)
 
-
   integral_map=np.reshape(integral_map,(resolution,resolution))
 
-
+  #Saving the fits
   hdu = fits.PrimaryHDU(integral_map)
   hdu.writeto('integral_map_4.fits',overwrite=True)
